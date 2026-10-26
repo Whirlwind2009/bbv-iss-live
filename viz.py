@@ -11,7 +11,7 @@ YELLOW = "#ffd84d"
 SKY = "#6ec6ff"
 
 
-def _style_geo(fig, projection, center=None):
+def _style_geo(fig, projection, center=None, height=520):
     geo = dict(
         projection_type=projection,
         showland=True, landcolor=LAND,
@@ -30,13 +30,16 @@ def _style_geo(fig, projection, center=None):
         paper_bgcolor="rgba(0,0,0,0)",
         legend=dict(orientation="h", y=0.02, x=0.01,
                     font=dict(color="white"), bgcolor="rgba(10,19,48,0.6)"),
-        height=520,
+        height=height,
     )
 
 
 def build_map(readings, latest, projection="natural earth", rotate_to_latest=False,
-              marker_name="ISS (latest reported)"):
+              marker_name="ISS (latest reported)", labels=None, height=520):
     """World map / globe: ground track, latest ISS marker, India box and Pilani."""
+    lab = {"india": "India (rough box)", "track": "Recent ground track", "pilani": "Pilani"}
+    if labels:
+        lab.update(labels)
     fig = go.Figure()
 
     # India bounding box (dotted) - clearly labelled as approximate
@@ -46,7 +49,7 @@ def build_map(readings, latest, projection="natural earth", rotate_to_latest=Fal
     fig.add_trace(go.Scattergeo(
         lat=box_lat, lon=box_lon, mode="lines",
         line=dict(width=1.5, color="#ffab5e", dash="dot"),
-        name="India (rough box)", hoverinfo="skip"))
+        name=lab["india"], hoverinfo="skip"))
 
     # Ground track (broken at the date line)
     if len(readings) > 1:
@@ -54,14 +57,14 @@ def build_map(readings, latest, projection="natural earth", rotate_to_latest=Fal
         fig.add_trace(go.Scattergeo(
             lat=lats, lon=lons, mode="lines",
             line=dict(width=2.5, color=YELLOW),
-            name="Recent ground track", hoverinfo="skip"))
+            name=lab["track"], hoverinfo="skip"))
 
     # Pilani
     fig.add_trace(go.Scattergeo(
         lat=[core.PILANI[0]], lon=[core.PILANI[1]], mode="markers+text",
         marker=dict(size=8, color="#ff7b7b", symbol="diamond"),
-        text=["Pilani"], textposition="bottom right",
-        textfont=dict(color="white", size=11), name="Pilani", hoverinfo="skip"))
+        text=[lab["pilani"]], textposition="bottom right",
+        textfont=dict(color="white", size=11), name=lab["pilani"], hoverinfo="skip"))
 
     # Latest ISS position
     fig.add_trace(go.Scattergeo(
@@ -72,7 +75,7 @@ def build_map(readings, latest, projection="natural earth", rotate_to_latest=Fal
                        f"Altitude {latest['altitude_km']:.0f} km<extra></extra>")))
 
     center = (latest["latitude"], latest["longitude"]) if rotate_to_latest else None
-    _style_geo(fig, projection, center)
+    _style_geo(fig, projection, center, height)
     return fig
 
 

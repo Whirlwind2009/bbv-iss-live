@@ -134,16 +134,17 @@ def get_status(age_seconds):
     return STATUS_DELAYED
 
 
-def format_age(seconds):
-    """Turn 75 into '1 min 15 s' for display."""
+def format_age(seconds, units=("s", "min", "h")):
+    """Turn 75 into '1 min 15 s' for display (units can be translated)."""
+    sec_u, min_u, hour_u = units
     seconds = int(seconds)
     if seconds < 60:
-        return f"{seconds} s"
+        return f"{seconds} {sec_u}"
     minutes, secs = divmod(seconds, 60)
     if minutes < 60:
-        return f"{minutes} min {secs} s"
+        return f"{minutes} {min_u} {secs} {sec_u}"
     hours, minutes = divmod(minutes, 60)
-    return f"{hours} h {minutes} min"
+    return f"{hours} {hour_u} {minutes} {min_u}"
 
 
 def utc_text(timestamp):
@@ -182,6 +183,26 @@ def is_over_india(latitude, longitude):
 
 def distance_from_pilani_km(reading):
     return haversine_km(reading["latitude"], reading["longitude"], *PILANI)
+
+
+def parse_start_time(text):
+    """Turn '2026-11-14 09:00' (India time) into a Unix timestamp, or None."""
+    if not text:
+        return None
+    try:
+        moment = datetime.fromisoformat(str(text).strip())
+    except ValueError:
+        return None
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=IST)
+    return moment.timestamp()
+
+
+def orbits_completed(elapsed_seconds, period_minutes=92.9):
+    """Whole orbits an object with this period completes in the elapsed time."""
+    if elapsed_seconds <= 0 or period_minutes <= 0:
+        return 0
+    return int(elapsed_seconds // (period_minutes * 60))
 
 
 # --------------------------------------------------------------------------

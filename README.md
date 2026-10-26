@@ -16,6 +16,21 @@ A student-built Python dashboard that requests the International Space Station's
 
 Status badge: **LIVE** (data ≤ 30 s old) · **DELAYED** · **OFFLINE DEMO** (internet/API failed → a clearly labelled replay of a *simulated* orbit, never shown as real).
 
+## New in this version
+| Feature | How to use it |
+|---|---|
+| **Kiosk screens** | Open the app address followed by `?kiosk=1` (e.g. `https://your-app.streamlit.app/?kiosk=1`). Big text, no sidebar or menus, and the screens change by themselves every 30 s: Orbit Watch → Earth in Motion → Space Data Lab → Meet the Team. Remove `?kiosk=1` to get the controls back. |
+| **Hindi / English** | Sidebar **Language / भाषा**, or add `&lang=hi` to the address. |
+| **Big text** | Sidebar tick-box (already on in kiosk mode). |
+| **Did you know?** | Rotating facts under the map, in the chosen language, labelled as approximate NASA/ISRO facts. |
+| **Orbit counter** | Orbits completed and sunrises/sunsets seen by the crew since the exhibition opened (elapsed time ÷ ~92.9 min). Set the opening time in `config.py` (`EXHIBITION_START = "2026-11-14 09:00"`); otherwise it counts from when the screen was opened. |
+| **School branding + QR panel** | Logo and school name in the header. The QR code at the bottom points to the app's own address (found automatically; set `APP_URL` in `config.py` if it ever shows the wrong address). |
+| **Meet the Team** | Edit names, roles and photos in `team.py` and `assets/team/`. |
+
+> **Photos and privacy:** the team page shows photos of students and staff. A *public* GitHub repository is visible to everyone, so make sure the school has consent. To hide photos set `SHOW_PHOTOS = False` in `team.py` (initials are shown instead) and delete the files in `assets/team/`; or make the repository private (Streamlit Cloud can deploy private repos).
+>
+> **Hindi text:** please have a Hindi teacher read `i18n.py` once before the event; correct any wording right there.
+
 ## Run it on your computer
 ```bash
 git clone https://github.com/<your-username>/bbv-iss-live.git
@@ -39,6 +54,9 @@ streamlit run app.py
 | `iss_core.py` | Fetch, validate, status, history, CSV, ground track | variables, dictionaries, functions, conditionals, loops, lists, exception handling, file handling, modules |
 | `viz.py` | Plotly map and charts | using libraries |
 | `app.py` | Streamlit screens (thin: it only *uses* `iss_core`) | modules, functions |
+| `i18n.py` | English and Hindi texts | dictionaries, lists |
+| `config.py` | Teacher settings (QR address, opening time, timings) | variables |
+| `branding.py` / `team.py` | Logo, photos, QR code, team details | functions, lists of dictionaries |
 | `scripts/make_sample_data.py` | Builds the simulated replay file | loops, maths, file handling |
 | `tests/` | Automated checks (`pytest`) | testing, functions |
 
@@ -75,7 +93,7 @@ Library code vs our code: `requests` does HTTP, `pandas` organises tables, `Plot
 pip install -r requirements-dev.txt
 pytest
 ```
-38 tests cover validation, failure handling (network mocked), data age/status, ground-track date-line splitting, CSV round-trip and a headless run of all three screens in live and offline modes.
+54 tests cover validation, failure handling (network mocked), data age/status, ground-track date-line splitting, CSV round-trip and headless runs of every screen in English and Hindi, live and offline, kiosk attract mode, the QR code and the team page.
 
 ## Credits
 Data: [Where the ISS at?](https://wheretheiss.at/w/developer) · ISS facts: [NASA](https://www.nasa.gov/missions/station/spot-the-station-frequently-asked-questions/) · Built with Python, Streamlit, Plotly, pandas and requests.
