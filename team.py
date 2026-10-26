@@ -15,7 +15,7 @@ STUDENTS = [
 ]
 
 MENTORS = [
-    {"name": "Mrs. Ruchi", "post": "HOD (CS)", "photo": "Ruchi.jpg"},
+    {"name": "Mrs. Ruchi", "post": "HOD (CS)", "photo": "Ruchi.png"},
     {"name": "Mr. Shobhit Daga", "post": "PGT (CS)", "photo": "shobhit_daga.jpg"},
     {"name": "Mrs. Nishi Soni", "post": "TGT (CS)", "photo": "nishi_soni.jpg"},
 ]
